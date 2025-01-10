@@ -34,7 +34,7 @@ def llike(theta, xproc, nproc, r):
     return np.sum(logprobX + logprobN)
 
 def lfcd_Nt(t, nproc, xproc, theta, r):
-    """log p(X, N | theta) = log p(N_t | N_{t-1}) + [if t < T: log p(N_{t+1}|N_t)] + [if t < T: p(X_t|N_t)]"""
+    """Single step update"""
     sigma, lambd, nu, delta = theta
     
     T = len(xproc)
