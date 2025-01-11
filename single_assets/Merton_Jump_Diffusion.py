@@ -2,6 +2,8 @@
 
 ## Using Metropolis-Within-Gibbs Sampler
 
+## Work in ptogress...
+
 import numpy as np 
 import yfinance as yf
 from scipy import special
