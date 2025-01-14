@@ -62,7 +62,8 @@ def predict(data, sigma, horizon=1):
 
 
 ticker = ['AAPL']
-data = yf.download(ticker, period="1y")['Adj Close']
+data = yf.download(ticker, period="1y")
+data = data['Close']
 data = data.dropna()
 
 xproc = np.log(data.values)
