@@ -63,7 +63,7 @@ def lfcd_vt(t, vproc, xproc, theta, r, alpha=2.0, beta=0.02):
     #vproc = np.maximum(1e-10, vproc)
     
     # prior
-    # Gamma prior <- strictly positive <- use alpha and beta hyperparams
+    # Gamma prior <- strictly positive
     lprior_vt = - np.log(beta ** alpha * special.gamma(alpha)) + (alpha - 1) * np.log(vproc[t]) - vproc[t] / beta
     
     val += lprior_vt
