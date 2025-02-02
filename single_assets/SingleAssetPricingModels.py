@@ -231,3 +231,35 @@ def exponential_volatility_model(S0, v0, rho, kappa, theta, sigma, r, T, steps):
                 np.exp(0.5 * v[i]) * np.sqrt(dt) * BtS[i-1])
          
     return S, v
+
+def stochastic_correlation_model(S0, v0, rho0, kappa_rho, theta_rho, sigma_rho, kappa, theta, sigma, r, T, steps):
+    """Stochastic Correlation Pricing Model with Gibbs Sampling under risk-neutral measure."""
+    
+    dt = T / steps
+    
+    # Initializing arrays for asset price (S), variance (v), and correlation (rho)
+    S = np.full(steps+1, S0)
+    v = np.full(steps+1, v0)
+    rho = np.full(steps+1, rho0)
+
+    # Generating Brownian motions
+    Bt = np.random.multivariate_normal([0, 0, 0], [[1, rho0, 0], [rho0, 1, 0], [0, 0, 1]], steps)
+    # Brownian motion for asset price
+    BtS = Bt[:, 0]
+    # Brownian motion for variance
+    Btv = Bt[:, 1]
+    # Brownian motion for correlation
+    Btrho = Bt[:, 2] 
+
+    for i in range(1, steps+1):
+        # Update correlation using mean-reverting process (Ornstein-Uhlenbeck)
+        rho[i] = rho[i-1] + kappa_rho * (theta_rho - rho[i-1]) * dt + sigma_rho * np.sqrt(dt) * Btrho[i-1]
+        rho[i] = np.clip(rho[i], -1, 1)  # Ensure rho stays in valid range
+        
+        # Update variance (Heston-style)
+        v[i] = np.maximum(v[i-1] + kappa * (theta - v[i-1]) * dt + sigma * np.sqrt(v[i-1] * dt) * Btv[i-1], 0)
+        
+        # Update asset price
+        S[i] = S[i-1] * np.exp((r - 0.5 * v[i]) * dt + np.sqrt(v[i] * dt) * BtS[i-1])
+
+    return S, v, rho
